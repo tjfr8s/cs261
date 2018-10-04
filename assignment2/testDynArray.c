@@ -84,6 +84,57 @@ int main(int argc, char* argv[]){
 	printf("Removing 3...\nThe stack's content: [6,5,9]\n");
  	assertTrue(!containsDynArr(dyn, 3), "Test not containing 3");
 	
-     deleteDynArr(dyn); 
+    deleteDynArr(dyn); 
+
+
+	dyn = newDynArr(2);
+        
+	addDynArr(dyn, 3);
+	addDynArr(dyn, 4);
+    printf("\n\nTesting edge cases for stack interface...\n");
+    printf("Poping all elements from stack...\n");
+
+    printf("size: %d ", sizeDynArr(dyn));
+    printf("top of stack: %d\n", topDynArr(dyn));
+    while(sizeDynArr(dyn) > 0){
+        popDynArr(dyn);
+        if(sizeDynArr(dyn) > 0) {
+            printf("top of stack: %d\n", topDynArr(dyn));
+        }
+        else{
+            printf("empty\n");
+        }
+    }
+
+
+    int i;
+	addDynArr(dyn, 3);
+	addDynArr(dyn, 4);
+
+    printf("\n\nTesting edge cases for bag interface..\n");
+    printf("Removing all elements from bag...\n");
+
+
+    for(i = 0; i < sizeDynArr(dyn); i++){
+        printf("%d ", getDynArr(dyn, i));
+    }
+
+    removeDynArr(dyn, 3);
+    printf("\n");
+
+    for(i = 0; i < sizeDynArr(dyn); i++){
+        printf("%d ", getDynArr(dyn, i));
+    }
+
+    removeDynArr(dyn, 4);
+    printf("\n");
+
+    for(i = 0; i < sizeDynArr(dyn); i++){
+        printf("%d ", getDynArr(dyn, i));
+    }
+
+
+    deleteDynArr(dyn); 
+    
 	return 0;
 }

@@ -1,6 +1,7 @@
 /*	dynamicArray.c: Dynamic Array implementation. */
 #include <assert.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include "dynArray.h"
 
 struct DynArr
@@ -93,16 +94,25 @@ void _dynArrSetCapacity(DynArr *v, int newCap)
 {	
 	/* FIXME: You will write this function */
     assert(v != NULL);
+    assert(v->data != NULL);
     int i;
-    TYPE* temp = (TYPE*) malloc(v->capacity * sizeof(TYPE));
 
+    // Create temporary array with new capacity.
+    TYPE* temp = (TYPE*) malloc(newCap * sizeof(TYPE));
+
+    // Populate the temporary array.
     for(i = 0; i < sizeDynArr(v); i++){
-        temp[i] = getDynArr(v, i);
+        if(i < newCap){
+            temp[i] = getDynArr(v, i);
+        }
     }
 
+    // Free v's current array, point v->data to the temporary array, and
+    // update capacity.
     free(v->data);
 
     v->data = temp;
+    v->capacity = newCap;
 }
 
 /* Get the size of the dynamic array
@@ -117,6 +127,7 @@ int sizeDynArr(DynArr *v)
 	return v->size;
 }
 
+
 /* 	Adds an element to the end of the dynamic array
 
 	param: 	v		pointer to the dynamic array
@@ -130,7 +141,9 @@ void addDynArr(DynArr *v, TYPE val)
 {
 	/* FIXME: You will write this function */
     assert(v != NULL);
-    /* Resize v if it is full */
+    assert(v->data != NULL);
+    
+    // Resize v if it is full.
     if(sizeDynArr(v) >= v->capacity){
         _dynArrSetCapacity(v, 2 * v->capacity);
     }
