@@ -372,6 +372,7 @@ void removeDynArr(DynArr *v, TYPE val)
     int i;
     int loc = -1;
     for(i = 0; i < sizeDynArr(v); i++){
+        // Remove the first occurrence of the value to be removed.
         if(EQ(v->data[i], val) && loc == -1){
             loc = i;        
         }

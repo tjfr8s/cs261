@@ -37,6 +37,7 @@ int isBalanced(char* s)
     char next = nextChar(s);
     int isBalanced = 1;
 
+    // Check if parens are closed in the correct order.
     while(next != '\0' && isBalanced){
         if(next == '('){
             pushDynArr(parens, ')');
