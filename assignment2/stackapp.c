@@ -1,3 +1,7 @@
+/*******************************************************************************
+ * Name: Tyler Freitas
+ * Date: 10/9/18
+*******************************************************************************/
 /*	stack.c: Stack application. */
 #include <stdio.h>
 #include <stdlib.h>
@@ -51,6 +55,8 @@ int isBalanced(char* s)
         else if((next == ')' ||
                  next == '}' ||
                  next == ']')){
+
+            // Check if closing symbol is paired with the correct opening symbol
             if(isEmptyDynArr(parens)){
                 isBalanced = 0;
             }
@@ -60,11 +66,13 @@ int isBalanced(char* s)
             else{
                 popDynArr(parens);
             }
+
         }
 
         next = nextChar(s);
     }
 
+    // The string is not balanced if some parens were not closed.
     if(!isEmptyDynArr(parens)){
         isBalanced = 0;
     }

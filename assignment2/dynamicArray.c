@@ -1,3 +1,7 @@
+/*******************************************************************************
+ * Name: Tyler Freitas
+ * Date: 10/9/18
+*******************************************************************************/
 /*	dynamicArray.c: Dynamic Array implementation. */
 #include <assert.h>
 #include <stdlib.h>
@@ -110,7 +114,6 @@ void _dynArrSetCapacity(DynArr *v, int newCap)
     // Free v's current array, point v->data to the temporary array, and
     // update capacity.
     free(v->data);
-
     v->data = temp;
     v->capacity = newCap;
 }
@@ -124,6 +127,7 @@ void _dynArrSetCapacity(DynArr *v, int newCap)
 */
 int sizeDynArr(DynArr *v)
 {
+    assert(v != NULL);
 	return v->size;
 }
 
@@ -170,6 +174,7 @@ TYPE getDynArr(DynArr *v, int pos)
 	/* FIXME: You will write this function */
     assert(v != NULL);
     assert(sizeDynArr(v) > 0);
+    assert(pos >=0 && pos < sizeDynArr(v));
 
     TYPE val;
     val = v->data[pos];
@@ -194,6 +199,7 @@ void putDynArr(DynArr *v, int pos, TYPE val)
 	/* FIXME: You will write this function */
     assert(v != NULL);
     assert(sizeDynArr(v) > 0);
+    assert(pos >=0 && pos < sizeDynArr(v));
 
     v->data[pos] = val;
 }
@@ -210,6 +216,9 @@ void putDynArr(DynArr *v, int pos, TYPE val)
 void swapDynArr(DynArr *v, int i, int  j)
 {
 	/* FIXME: You will write this function */
+    assert(v != NULL);
+    assert(sizeDynArr(v) > 0);
+    assert((i >= 0) && (j >= 0) && (i < sizeDynArr(v)) && (j < sizeDynArr(v)));
     TYPE temp = v->data[i];
     v->data[i] = v->data[j];
     v->data[j] = temp;
@@ -231,8 +240,10 @@ void removeAtDynArr(DynArr *v, int idx)
 	/* FIXME: You will write this function */
     assert(v != NULL);
     assert(v->size > 0);
-    assert(idx < v->size && idx >= 0);
+    assert((idx < sizeDynArr(v)) && (idx >= 0));
+
     int i;
+
     for(i = idx; i < sizeDynArr(v) - 1; i++){
         v->data[i] = v->data[i + 1];
     }
@@ -317,6 +328,7 @@ void popDynArr(DynArr *v)
 	/* FIXME: You will write this function */
     assert(v != 0);
     assert(sizeDynArr(v) > 0);
+
     removeAtDynArr(v, sizeDynArr(v) - 1);
 }
 
@@ -340,6 +352,7 @@ int containsDynArr(DynArr *v, TYPE val)
 	/* FIXME: You will write this function */
     assert(v != NULL);
     assert(sizeDynArr(v) > 0);
+
     int i;
 
     for(i = 0; i < sizeDynArr(v); i++){
