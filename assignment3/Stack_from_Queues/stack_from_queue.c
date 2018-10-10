@@ -5,8 +5,8 @@ implement
 @oregonstate.edu
  * email address below:
  *
- * Name: 
- * Email:
+ * Name: Tyler Freitas 
+ * Email: freitast@oregonstate.edu
  */
 
 #include <assert.h>
@@ -39,7 +39,16 @@ struct listQueue {
 */
 void listQueueInit(struct listQueue *q) {
 	
-       // FIXME: you must write this
+    // FIXME: you must write this
+    assert(q != NULL);
+    struct link* newLink = (struct link*) malloc( sizeof(struct link));
+    assert(newLink != NULL);
+
+    newLink->next = NULL;
+    q->firstLink = newLink;
+    q->lastLink = newLink;
+    q->size = 0;
+       
 
 }
 
@@ -52,8 +61,16 @@ the newly
  */
 struct listQueue * listQueueCreate()
 {
-     //FIXME: you must write this
-	
+    //FIXME: you must write this
+    // Allocate memory for a new listQueue;
+    struct listQueue* newListQueue = 
+        (struct listQueue*) malloc(sizeof(struct listQueue));
+    assert(newListQueue != NULL);
+    
+    // Initialize newListQueue
+    listQueueInit(newListQueue);
+
+    return newListQueue;
 }
 
 
@@ -63,7 +80,19 @@ struct listQueue * listQueueCreate()
 */
 int listQueueIsEmpty(struct listQueue *q) {
 	
-          //FIXME: you must write this
+    //FIXME: you must write this
+    assert(q != NULL);
+    int isEmpty;
+
+    // listQueue is empty if the first link's next pointer points to NULL
+    if(q->firstLink->next == NULL){
+        isEmpty = 1;
+    }
+    else{
+        isEmpty = 0;
+    }
+
+    return isEmpty;
 
 }
 
@@ -76,21 +105,45 @@ links
  */
 void listQueueAddBack(struct listQueue *q, TYPE e) {
 	
+    // FIXME: you must write this
+    // Create new link 
+    assert(q != NULL);
+    struct link* newLink = (struct link*) malloc(sizeof(struct link));
+    assert(newLink != NULL);
+    
+    // Set new link's value and next pointer
+    newLink->value = e;
+    newLink->next = NULL;
 
-       // FIXME: you must write this
-
+    // Add new link to the back of the list
+    q->lastLink->next = newLink;
+    q->lastLink = newLink;
+    q->size++;
 }
 
 /*
  * This function takes a list argument and removes the link at the front.
  */
 void listQueueRemoveFront(struct listQueue *q) {
-
     
     // FIXME: you must write this
+    assert(q != NULL);
+    assert(!listQueueIsEmpty(q));
 
+    // Remove front link from the list
+    struct link* temp = q->firstLink->next;
+    q->firstLink->next = q->firstLink->next->next;
 
+    // Free front link and adjust size of list
+    free(temp);
+    q->size--;
 
+    // Adjust the last link pointer if the queue is now empty
+    if(q->size == 0){
+        q->lastLink = q->firstLink;
+    }
+
+    temp = NULL;
 }
 
 /*
@@ -98,8 +151,12 @@ void listQueueRemoveFront(struct listQueue *q) {
  */
 TYPE listQueueFront(struct listQueue *q) {
 	
-       // FIXME: you must write this
+    // FIXME: you must write this
+    assert(q != NULL);
+    assert(!listQueueIsEmpty(q));
 
+    return q->firstLink->next->value;
+        
 }
 
 
@@ -137,9 +194,13 @@ both
  */
 void linkedListStackInit(struct linkedListStack * s)
 {
-	// FIXME: you must write this
+    // FIXME: you must write this
+    // Initialize stack's two queues and size 
+    s->Q1 = listQueueCreate();
+    s->Q2 = listQueueCreate();
+    s->structSize = 0;
 
- }
+}
 
 /*
 * This function creates the linked list stack. It allocates the memory and 
@@ -150,8 +211,15 @@ the stack.
 struct linkedListStack * linkedListStackCreate(){
 
     // FIXME: you must write this
+    // Allocate space for the new stack
+    struct linkedListStack* newStack = 
+        (struct linkedListStack*) malloc(sizeof(struct linkedListStack));
+    assert(newStack != NULL);
 
-	
+    linkedListStackInit(newStack);
+    // Initialize the stack
+
+    return newStack;
 
 }
 
@@ -162,8 +230,16 @@ returns a 0.
 int linkedListStackIsEmpty(struct linkedListStack *s) {
 
 	// FIXME: you must write this
+    int isEmpty;
 
-
+    if(s->structSize == 0){
+        isEmpty = 1;
+    }
+    else{
+        isEmpty = 0;
+    }
+    
+    return isEmpty;
 }
 
 /*
@@ -174,8 +250,9 @@ The
  */
 void linkedListStackPush(struct linkedListStack *s, TYPE d) {
 	
-        // FIXME: you must write this
-
+    // FIXME: you must write this
+    listQueueAddBack(s->Q1, d);
+    s->structSize++;
 
 }
 /*
@@ -187,8 +264,31 @@ maintained
  */
 void linkedListStackPop(struct linkedListStack *s) {
 	
-        // FIXME: you must write this
+    // FIXME: you must write this
+    int i;
+    struct listQueue* temp;
 
+    // Remove the link at the back of s->Q1
+    if(!linkedListStackIsEmpty(s)){
+        // Transfer all elements of Q1 to Q2 except for the final element
+        for(i = 0; i < s->structSize - 1; i++){
+            listQueueAddBack(s->Q2, listQueueFront(s->Q1)); 
+            listQueueRemoveFront(s->Q1);
+        }
+        // Remove the last element in Q1
+        listQueueRemoveFront(s->Q1);
+
+        // Adjsut stack size and swap Q1 and Q2
+        s->structSize--;
+
+        temp = s->Q1;
+        s->Q1 = s->Q2;
+        s->Q2 = temp;
+    }
+    // Produce error if empty stack is popped
+    else{
+        printf("\n\nError: stack is empty\n\n");
+    }
 }
 /*
  * This function returns the value that is at the back of the queue that 
@@ -197,7 +297,32 @@ is
  */
 TYPE linkedListStackTop(struct linkedListStack *s) {
 
-       // FIXME: you must write this
+    // FIXME: you must write this
+    TYPE topVal;
+
+    int i;
+    struct listQueue* temp;
+    // Return the value of on the top of the stack
+    if(!linkedListStackIsEmpty(s)){
+        for(i = 0; i < s->structSize - 1; i++){
+            listQueueAddBack(s->Q2, listQueueFront(s->Q1)); 
+            listQueueRemoveFront(s->Q1);
+        }
+        topVal = listQueueFront(s->Q1);
+        listQueueAddBack(s->Q2, listQueueFront(s->Q1)); 
+        listQueueRemoveFront(s->Q1);
+
+
+        temp = s->Q1;
+        s->Q1 = s->Q2;
+        s->Q2 = temp;
+    }
+    else{
+        printf("\n\nError: stack is empty\n\n");
+    }
+
+
+    return topVal;
 
 }
 
@@ -233,30 +358,35 @@ int main(int argc, char* argv[])
 {
 	struct linkedListStack *stack = linkedListStackCreate();
 
+
 	//Test Stack
 	//Push 4 values onto the stack
 	printf("Pushing the value: 1\n");
 	linkedListStackPush(stack, 1);
 	printf("Pushed.\n\n");
 
+
 	printf("Pushing the value: 2\n");
 	linkedListStackPush(stack, 2);
 	printf("Pushed.\n\n");
 
+
 	printf("Pushing the value: 3\n");
 	linkedListStackPush(stack, 3);
 	printf("Pushed.\n\n");
+
 
 	printf("Pushing the value: 4\n");
 	linkedListStackPush(stack, 4);
 	printf("Pushed.\n\n");
 
 
-
 	//Print value at the top and then remove it
 	printf("Value at the top of stack %d now being popped. \n",linkedListStackTop(stack));
 	linkedListStackPop(stack);
 	printf("Value popped.\n\n");
+
+
 
 	printf("Value at the top of stack: %d now being popped. \n", linkedListStackTop(stack));
 	linkedListStackPop(stack);
@@ -280,6 +410,7 @@ int main(int argc, char* argv[])
 	printf("Pushing the value: 10\n");
 	linkedListStackPush(stack, 10);
 	printf("Pushed.\n\n");
+
 
 	printf("Pushing the value: 11\n");
 	linkedListStackPush(stack, 11);
