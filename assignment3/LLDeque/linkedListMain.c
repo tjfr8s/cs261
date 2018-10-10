@@ -15,6 +15,7 @@ int main(){
 	linkedListRemoveFront(l);
 	linkedListRemoveBack(l);
 	linkedListPrint(l);
+    linkedListDestroy(l);
     /*
     */
 /* BAG */
@@ -25,6 +26,10 @@ int main(){
 	 linkedListAdd (k, (TYPE)13);
        linkedListAdd(k, (TYPE)14);
        linkedListRemove(k, (TYPE)11);
+       printf("The linked list %s the value %d\n", 
+               linkedListContains(k,11) ? "contains": "doesn't contain", 11);
+       printf("The linked list %s the value %d\n", 
+               linkedListContains(k,13) ? "contains": "doesn't contain", 13);
         linkedListPrint(k);
         linkedListDestroy(k);
 /*	

@@ -1,3 +1,7 @@
+/*******************************************************************************
+ * Name: Tyler Freitas
+ * Email: freitast@oregonstate.edu
+*******************************************************************************/ 
 #include "linkedList.h"
 #include <assert.h>
 #include <stdlib.h>
@@ -26,12 +30,14 @@ struct LinkedList
  */
 static void init(struct LinkedList* list) {
 	// FIXME: you must write this
+    // Allocate space for front and back sentinels
     assert(list != NULL);
     struct Link* frontSent = malloc(sizeof(struct Link));
     struct Link* backSent = malloc(sizeof(struct Link));
     assert(frontSent != NULL);
     assert(backSent != NULL);
 
+    // Initialize members of the sentinels
     frontSent->next = backSent;
     frontSent->prev = NULL;
     backSent->prev = frontSent;
@@ -51,9 +57,11 @@ static void addLinkBefore(struct LinkedList* list, struct Link* link, TYPE value
     assert(list != NULL);
     assert(link != NULL);
 	// FIXME: you must write this
+    // Allocate space for the new link
     struct Link* newLink = malloc(sizeof(struct Link));
     newLink->value = value;
 
+    // Insert the link before the speciied link 
     newLink->next = link;
     newLink->prev = link->prev;
     newLink->next->prev = newLink;
@@ -71,6 +79,7 @@ static void removeLink(struct LinkedList* list, struct Link* link)
     assert(list != NULL);
     assert(link != NULL);
 	// FIXME: you must write this
+    // Adjust links to remove target link and free target link
     struct Link* prev = link->prev;
     struct Link* next = link->next;
     if(list->size > 0){
@@ -98,6 +107,7 @@ struct LinkedList* linkedListCreate()
  */
 void linkedListDestroy(struct LinkedList* list)
 {
+    // Remove all links in the list and free the sentinels and the list itself
     assert(list != NULL);
 	while (!linkedListIsEmpty(list))
 	{
@@ -185,6 +195,7 @@ void linkedListPrint(struct LinkedList* list)
 {
     assert(list != NULL);
 	// FIXME: you must write this
+    // Print values stored at all links in list
     struct Link* printLink = list->frontSentinel->next;
     while(printLink != list->backSentinel){
         printf("%d ", printLink->value);
@@ -212,9 +223,11 @@ int linkedListContains(struct LinkedList* list, TYPE value)
 	// FIXME: you must write this
     int contains = 0;
 
+    // Search for value until it is found or the end of the list is reached
+    // Return 1 if the value was found and 0 otherwise
     struct Link* test = list->frontSentinel->next;
     while(!contains && test != list->backSentinel){
-        if(test->value == value){
+        if(EQ(test->value, value)){
             contains = 1;
         }
         test = test->next;
@@ -232,12 +245,14 @@ void linkedListRemove(struct LinkedList* list, TYPE value)
 	// FIXME: you must write this
     int removed = 0;
     struct Link* search = list->frontSentinel->next;
+    struct Link* next = search->next;
 
+    // Search for value and remove the appropriate link if it is found
     while(!removed && search != list->backSentinel){
-        if(search->value == value){
+        if(EQ(search->value, value)){
             removeLink(list, search);
             removed = 1;
         }
-        search = search->next;
+        search = next;
     }
 }

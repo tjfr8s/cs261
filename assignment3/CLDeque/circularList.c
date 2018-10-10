@@ -1,3 +1,7 @@
+/*******************************************************************************
+ * Name: Tyler Freitas
+ * Email: freitast@oregonstate.edu
+*******************************************************************************/
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
@@ -24,11 +28,14 @@ struct CircularList
 static void init(struct CircularList* list)
 {
 	// FIXME: you must write this
+    // Allocate memory for sentinel, initialize its values, and insert it
+    // into the list.
     struct Link* newLink = malloc(sizeof(struct Link));
     assert(newLink != NULL);
     newLink->next = newLink;
     newLink->prev = newLink;
 
+    // Initialize the lists members
     list->sentinel = newLink;
     list->size = 0;
 
@@ -41,6 +48,8 @@ static struct Link* createLink(TYPE value)
 {
 	// FIXME: you must write this
     struct Link* newLink = malloc(sizeof(struct Link));
+    // Allocate memory for the new link, assign appropriate values to members,
+    // and return it;
     assert(newLink != NULL);
     newLink->value = value;
     newLink->next = NULL;
@@ -59,6 +68,7 @@ static void addLinkAfter(struct CircularList* list, struct Link* link, TYPE valu
     assert(list != NULL);
     assert(link != NULL);
     
+    // Create link with specified value and insert it after the target link
     struct Link* newLink = createLink(value);
 
     newLink->next = link->next;
@@ -66,6 +76,7 @@ static void addLinkAfter(struct CircularList* list, struct Link* link, TYPE valu
     link->next = newLink;
     newLink->next->prev = newLink;
     
+    // Adjust size of list
     list->size++;
 
 }
@@ -77,6 +88,7 @@ static void addLinkAfter(struct CircularList* list, struct Link* link, TYPE valu
 static void removeLink(struct CircularList* list, struct Link* link)
 {
 	// FIXME: you must write this
+    // Remove the target link from the list
     assert(list != NULL);
     assert(link != NULL);
     link->prev->next = link->next;
@@ -182,9 +194,10 @@ void circularListPrint(struct CircularList* list)
 	// FIXME: you must write this
     struct Link* printLink = list->sentinel->next;
     while(printLink != list->sentinel){
-        printf("%f\n", printLink->value);
+        printf("%g ", printLink->value);
         printLink = printLink->next;
     }
+    printf("\n");
 }
 
 /**
@@ -196,10 +209,12 @@ void circularListReverse(struct CircularList* list)
     struct Link* reverseLink = list->sentinel->next;
     struct Link* temp;
 
+    // Swap the next and prev links of the sentinel
     temp = list->sentinel->next;
     list->sentinel->next = list->sentinel->prev;
     list->sentinel->prev = temp;  
 
+    // Swap next and prev links of all links in list
     while(reverseLink != list->sentinel){
         temp = reverseLink->next;
         reverseLink->next = reverseLink->prev;
