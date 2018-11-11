@@ -14,6 +14,12 @@ int main(){
 	printf("%i\n", linkedListBack(l));
 	linkedListRemoveFront(l);
 	linkedListRemoveBack(l);
+	linkedListRemoveBack(l);
+	linkedListRemoveBack(l);
+	linkedListRemoveBack(l);
+	linkedListRemoveBack(l);
+	linkedListRemoveBack(l);
+	linkedListRemoveBack(l);
 	linkedListPrint(l);
     linkedListDestroy(l);
     /*

@@ -298,7 +298,7 @@ is
 TYPE linkedListStackTop(struct linkedListStack *s) {
 
     // FIXME: you must write this
-    TYPE topVal;
+    TYPE topVal = 0;
 
     int i;
     struct listQueue* temp;

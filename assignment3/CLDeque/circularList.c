@@ -91,10 +91,15 @@ static void removeLink(struct CircularList* list, struct Link* link)
     // Remove the target link from the list
     assert(list != NULL);
     assert(link != NULL);
-    link->prev->next = link->next;
-    link->next->prev = link->prev;
-    free(link);
-    list->size--;
+    if(list->size > 0){
+        link->prev->next = link->next;
+        link->next->prev = link->prev;
+        free(link);
+        list->size--;
+    }
+    else{
+        printf("error: list is empty\n");
+    }
 }
 
 /**

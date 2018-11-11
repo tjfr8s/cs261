@@ -15,12 +15,18 @@ int main()
 	printf("%g\n", circularListBack(deque));
 	
 	circularListRemoveFront(deque);
-	circularListRemoveBack(deque);
+    circularListRemoveBack(deque);
 	circularListPrint(deque);
 	
 	circularListReverse(deque);
 	circularListPrint(deque);
 	
+	circularListRemoveFront(deque);
+    circularListRemoveBack(deque);
+	circularListRemoveFront(deque);
+    circularListRemoveBack(deque);
+	circularListRemoveFront(deque);
+    circularListRemoveBack(deque);
 	circularListDestroy(deque);
 	
 	return 0;
