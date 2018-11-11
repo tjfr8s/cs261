@@ -91,10 +91,12 @@ void handleCommand(DynamicArray* list, char command)
         case 'l':
             ifp = fopen("./toDo.txt", "r");
             listLoad(list, ifp); 
+            fclose(ifp);
             break;
         case 's':
             ofp = fopen("./toDo.txt", "w");
             listSave(list, ofp);
+            fclose(ofp);
             break;
         case 'a':
             addTask(list);
@@ -109,6 +111,10 @@ void handleCommand(DynamicArray* list, char command)
             printf("\n");
             break;
         case 'r':
+            if(dySize(list) > 0){
+                Task* temp = dyHeapGetMin(list);
+                free(temp);
+            }
             dyHeapRemoveMin(list, taskCompare);
             break;
         case 'p':
@@ -143,6 +149,10 @@ int main()
         handleCommand(list, command);
     }
     while (command != 'e');
+    int i;
+    for(i = 0; i < dySize(list); i++) {
+        taskDelete(dyGet(list, i));
+    };
     dyDelete(list);
     return 0;
 }

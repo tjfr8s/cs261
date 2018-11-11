@@ -25,7 +25,6 @@ Task* taskNew(int priority, char* name)
     newTask->order = count; 
     count++;
     strcpy(newTask->name, name);
-    printf("new\n");
     return newTask;
 }
 

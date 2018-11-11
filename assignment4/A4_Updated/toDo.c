@@ -3,7 +3,6 @@
  * Name: 
  * Date: 
  */
-
 #include "dynamicArray.h"
 #include "task.h"
 #include <stdlib.h>
@@ -52,7 +51,7 @@ void listPrint(DynamicArray* heap)
 {
     DynamicArray* temp = dyNew(1);
     dyCopy(heap, temp);
-    while (dySize(heap) > 0)
+    while (dySize(temp) > 0)
     {
         Task* task = dyHeapGetMin(temp);
         printf("\n");
@@ -63,6 +62,21 @@ void listPrint(DynamicArray* heap)
     dyDelete(temp);
 }
 
+void addTask(DynamicArray* list){
+   printf("Enter the task name:\n");
+   char taskName[256]; 
+   scanf("%s", taskName);
+   printf("Enter the task priority:\n");
+   int taskPriority;
+   scanf("%d", &taskPriority);
+
+   Task* newTask = malloc(sizeof(Task));
+   strcpy(newTask->name, taskName);
+   newTask->priority = taskPriority;
+   dyHeapAdd(list, newTask, taskCompare);  
+    while (getchar() != '\n');
+}
+
 /**
  * Handles the given command.
  * @param list
@@ -71,6 +85,46 @@ void listPrint(DynamicArray* heap)
 void handleCommand(DynamicArray* list, char command)
 {
     // FIXME: Implement
+    FILE *ifp; 
+    FILE *ofp;
+    switch(command){
+        case 'l':
+            ifp = fopen("./toDo.txt", "r");
+            listLoad(list, ifp); 
+            fclose(ifp);
+            break;
+        case 's':
+            ofp = fopen("./toDo.txt", "w");
+            listSave(list, ofp);
+            fclose(ofp);
+            break;
+        case 'a':
+            addTask(list);
+            break;
+        case 'g':
+            if(dySize(list) > 0){
+                taskPrint(dyHeapGetMin(list));
+            }
+            else{
+                printf("The list is empty\n\n");
+            }
+            printf("\n");
+            break;
+        case 'r':
+            if(dySize(list) > 0){
+                Task* temp = dyHeapGetMin(list);
+                free(temp);
+            }
+            dyHeapRemoveMin(list, taskCompare);
+            break;
+        case 'p':
+            listPrint(list);
+            break;
+        case 'e':
+            break;
+
+    }
+
 }
 
 int main()
@@ -96,6 +150,10 @@ int main()
         handleCommand(list, command);
     }
     while (command != 'e');
+    int i;
+    for(i = 0; i < dySize(list); i++) {
+        taskDelete(dyGet(list, i));
+    };
     dyDelete(list);
     return 0;
 }

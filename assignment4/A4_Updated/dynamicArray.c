@@ -234,7 +234,7 @@ void adjustHeap(DynamicArray* heap, int last, int position, compareFunction comp
 
     if(rightChild < last){
         int indexSmallest;  
-        if(compare(dyGet(heap, leftChild), dyGet(heap, rightChild)) < 0){
+        if(compare(dyGet(heap, leftChild), dyGet(heap, rightChild)) == -1){
             indexSmallest = leftChild; 
         }
         else{
@@ -294,9 +294,14 @@ void dyHeapAdd(DynamicArray* heap, TYPE value, compareFunction compare)
 void dyHeapRemoveMin(DynamicArray* heap, compareFunction compare)
 {
     // FIXME: implement
-    dySwap(heap, 0, dySize(heap) - 1);
-    dyRemoveAt(heap, dySize(heap) - 1);
-    adjustHeap(heap, dySize(heap), 0, compare);
+    if(dySize(heap) > 0){
+        dySwap(heap, 0, dySize(heap) - 1);
+        dyRemoveAt(heap, dySize(heap) - 1);
+        adjustHeap(heap, dySize(heap), 0, compare);
+    }
+    else{
+        printf("The list is empty\n\n");
+    }
 }
 
 /**
