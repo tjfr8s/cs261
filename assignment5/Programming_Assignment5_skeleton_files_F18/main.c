@@ -32,6 +32,9 @@ char* nextWord(FILE* file)
                 word = realloc(word, maxLength);
             }
             // .............
+            if(c >= 'A' && c <= 'Z'){
+                c += 32;
+            }
             word[length] = c;
             length++;
         }
@@ -74,7 +77,23 @@ int main(int argc, const char** argv)
     // --- Concordance code begins here ---
     // Be sure to free the word after you are done with it here.
     // --- Concordance code ends here ---
-    
+    FILE* ifp = fopen(fileName, "r");
+    char* word = nextWord(ifp);
+
+    while(word != NULL){
+        printf("%s\n", word);
+        if(hashMapContainsKey(map, word)){
+            (*hashMapGet(map, word))++;
+        }
+        else{
+            printf("capacity: %d, load: %.2f\n", hashMapCapacity(map), hashMapTableLoad(map));
+            hashMapPut(map, word, 1);
+            printf("capacity: %d, load: %.2f\n", hashMapCapacity(map), hashMapTableLoad(map));
+        }
+
+        free(word);
+        word = nextWord(ifp);
+    }
     hashMapPrint(map);
     
     timer = clock() - timer;
@@ -84,6 +103,7 @@ int main(int argc, const char** argv)
     printf("Number of buckets: %d\n", hashMapCapacity(map));
     printf("Table load: %f\n", hashMapTableLoad(map));
     
+    fclose(ifp);
     hashMapDelete(map);
     return 0;
 }

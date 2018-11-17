@@ -163,7 +163,6 @@ void resizeTable(HashMap* map, int capacity)
 {
     // FIXME: implement
     HashMap* newMap = hashMapNew(capacity);
-    HashLink** tempTable = map->table;
     HashLink* current = NULL;
     int i;
 
@@ -176,11 +175,8 @@ void resizeTable(HashMap* map, int capacity)
         }
     }
 
-    newMap->table = tempTable;
-    newMap->capacity = map->capacity;
-    map->table = newMap->table;
-    map->capacity = capacity;
-    hashMapDelete(newMap);
+    hashMapDelete(map);
+    map = newMap;
     newMap = NULL;
 }
 
@@ -200,10 +196,6 @@ void resizeTable(HashMap* map, int capacity)
 void hashMapPut(HashMap* map, const char* key, int value)
 {
     // FIXME: implement
-    if(hashMapTableLoad(map) == MAX_TABLE_LOAD){
-        resizeTable(map, 2 * map->capacity); 
-    }
-
     int index = hashFunction1(key) % hashMapCapacity(map);
     if(index < 0) {index += hashMapCapacity(map);}
 
@@ -211,6 +203,9 @@ void hashMapPut(HashMap* map, const char* key, int value)
     HashLink* current = map->table[index];
     HashLink* prev = NULL;
 
+    if(hashMapTableLoad(map) == MAX_TABLE_LOAD){
+        resizeTable(map, 2 * map->capacity); 
+    }
 
     // Search for the key in the hash table. If it is found, update the value.
     while(!keyAdded && current != NULL){
