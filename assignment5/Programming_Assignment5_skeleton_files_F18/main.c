@@ -89,6 +89,7 @@ int main(int argc, const char** argv)
             printf("capacity: %d, load: %.2f\n", hashMapCapacity(map), hashMapTableLoad(map));
             hashMapPut(map, word, 1);
             printf("capacity: %d, load: %.2f\n", hashMapCapacity(map), hashMapTableLoad(map));
+            hashMapPrint(map);
         }
 
         free(word);

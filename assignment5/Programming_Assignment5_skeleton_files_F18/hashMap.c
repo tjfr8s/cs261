@@ -176,9 +176,9 @@ void resizeTable(HashMap* map, int capacity)
         }
     }
 
+    map->table = newMap->table;
     newMap->table = tempTable;
     newMap->capacity = map->capacity;
-    map->table = newMap->table;
     map->capacity = capacity;
     hashMapDelete(newMap);
     newMap = NULL;
