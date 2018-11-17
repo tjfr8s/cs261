@@ -214,10 +214,15 @@ void hashMapPut(HashMap* map, const char* key, int value)
     // value pair.
     if(!keyAdded && prev == NULL){
         map->table[index] = hashLinkNew(key, value, NULL);
+            map->size++;
     }
     else if(!keyAdded){
         prev->next = hashLinkNew(key, value, NULL);
             map->size++;
+    }
+
+    if(hashMapTableLoad(map) > MAX_TABLE_LOAD){
+        resizeTable(map, 2 * map->capacity); 
     }
 }
 
@@ -239,7 +244,7 @@ void hashMapRemove(HashMap* map, const char* key)
     HashLink* prev = NULL;
     while(remove != NULL){
         if(strcmp(remove->key, key) == 0 && prev == NULL){
-            map->table[index]->next = remove->next;
+            map->table[index] = remove->next;
             hashLinkDelete(remove);
             remove = NULL; 
             map->size--;
