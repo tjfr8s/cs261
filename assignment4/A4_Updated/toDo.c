@@ -1,7 +1,7 @@
 /*
  * CS 261 Assignment 4
- * Name: 
- * Date: 
+ * Name: Tyler freitas
+ * Date: 11/12/2018
  */
 #include "dynamicArray.h"
 #include "task.h"
@@ -65,9 +65,9 @@ void listPrint(DynamicArray* heap)
 void addTask(DynamicArray* list){
    printf("Enter the task name:\n");
    char taskName[256]; 
-   scanf("%s", taskName);
+   scanf("%[^\n]s", taskName);
    printf("Enter the task priority:\n");
-   int taskPriority;
+   int taskPriority = 0;
    scanf("%d", &taskPriority);
 
    Task* newTask = malloc(sizeof(Task));

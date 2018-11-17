@@ -1,7 +1,7 @@
 /*
  * CS 261 Assignment 4
- * Name: 
- * Date: 
+ * Name: Tyler Freitas
+ * Date: 11/12/2018
  */
 
 #include "task.h"
