@@ -81,7 +81,6 @@ int main(int argc, const char** argv)
     char* word = nextWord(ifp);
 
     while(word != NULL){
-        printf("%s\n", word);
         if(hashMapContainsKey(map, word)){
             (*hashMapGet(map, word))++;
         }

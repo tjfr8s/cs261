@@ -6,6 +6,8 @@
 #include <string.h>
 #include <ctype.h>
 
+#define MIN(a, b) ((a < b) ? a : b)
+
 /**
  * Allocates a string for the next word in the file and returns it. This string
  * is null terminated. Returns NULL after reaching the end of the file.
@@ -55,7 +57,54 @@ char* nextWord(FILE* file)
 void loadDictionary(FILE* file, HashMap* map)
 {
     // FIXME: implement
+    char* word = nextWord(file);
+    while(word != NULL){
+        if(hashMapContainsKey(map, word)){
+            (*hashMapGet(map,word))++;
+        }
+        else{
+            hashMapPut(map, word, 1);
+        }
+        free(word);
+        word = nextWord(file);
+    }
 }
+
+int levenshteinDistance(const char* word1, 
+                    int length1, 
+                    const char* word2, 
+                    int length2){
+    int cost;
+
+    if(length1 == 0) {return length2;}
+    if(length2 == 0) {return length1;}
+
+    if(word1[length1 - 1] == word2[length2 - 1]){
+        cost = 0;
+    } 
+    else{
+        cost = 1;
+    }
+
+    return MIN(levenshteinDistance(word1, length1 - 1, word2, length2) + 1,
+                   MIN(levenshteinDistance(word1, length1, word2, length2 - 1) + 1,
+                   levenshteinDistance(word1, length1 - 1, word2, length2 - 1) + cost));
+}
+
+void levenshtein(HashMap* dictionary, const char* word){
+    int i;
+    for(i = 0; i < hashMapCapacity(dictionary); i++){
+        HashLink* current = dictionary->table[i];
+        while(current != NULL){
+            current->value = levenshteinDistance(current->key,
+                                                 strlen(current->key),
+                                                 word,
+                                                 strlen(word));
+            current = current->next;
+        }
+    }
+}
+
 
 /**
  * Prints the concordance of the given file and performance information. Uses
@@ -83,6 +132,16 @@ int main(int argc, const char** argv)
     {
         printf("Enter a word or \"quit\" to quit: ");
         scanf("%s", inputBuffer);
+        printf("%s\n", inputBuffer);
+        int i = 0;
+        while(inputBuffer[i] != '\0'){
+            inputBuffer[i] = tolower(inputBuffer[i]);
+            i++;
+        }
+        levenshtein(map, inputBuffer)
+        printf("%s\n", inputBuffer);
+        
+        //printf("%s, %s, ld: %d", "test", inputBuffer, levenshteinDistance("test", strlen("test"), inputBuffer, strlen(inputBuffer)));
         
         //Fix me:  implement the spell checker code here..
         
@@ -90,6 +149,7 @@ int main(int argc, const char** argv)
         {
             quit = 1;
         }
+        //hashMapPrint(map);
     }
     
     hashMapDelete(map);
