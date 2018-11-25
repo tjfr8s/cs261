@@ -7,6 +7,7 @@
 #include <ctype.h>
 
 #define MIN(a, b) ((a < b) ? a : b)
+#define MIN3(a, b, c) ((a) < (b) ? ((a) < (c) ? (a) : (c)) : ((b) < (c) ? (b) : (c)))
 
 /**
  * Allocates a string for the next word in the file and returns it. This string
@@ -70,6 +71,7 @@ void loadDictionary(FILE* file, HashMap* map)
     }
 }
 
+/*
 int levenshteinDistance(const char* word1, 
                     int length1, 
                     const char* word2, 
@@ -90,16 +92,68 @@ int levenshteinDistance(const char* word1,
                    MIN(levenshteinDistance(word1, length1, word2, length2 - 1) + 1,
                    levenshteinDistance(word1, length1 - 1, word2, length2 - 1) + cost));
 }
+*/
 
-void levenshtein(HashMap* dictionary, const char* word){
+// algorithm source: https://en.wikibooks.org/wiki/Algorithm_Implementation/Strings/Levenshtein_distance#C
+int levenshteinDistance(const char *word1, const char *word2) {
+    unsigned int x, y, word1len, word2len;
+    word1len = strlen(word1);
+    word2len = strlen(word2);
+    unsigned int matrix[word1len+1][word1len+1];
+    matrix[0][0] = 0;
+    for (x = 1; x <= word2len; x++){
+        matrix[x][0] = matrix[x-1][0] + 1;
+    }
+    for (y = 1; y <= word1len; y++)
+        matrix[0][y] = matrix[0][y-1] + 1;
+    for (x = 1; x <= word2len; x++){
+        for (y = 1; y <= word1len; y++){
+            int cost = 1;
+            if(word1[y-1] == word2[x-1]){
+                cost = 0;
+            }
+
+            matrix[x][y] = MIN3(matrix[x-1][y] + 1, 
+                                matrix[x][y-1] + 1, 
+                                matrix[x-1][y-1] + cost);
+            }
+    }
+    return(matrix[word2len][word1len]);
+}
+
+void levenshtein(HashMap* dictionary, char** bestFive, const char* word){
     int i;
+    int j;
+    for(j = 0; j < 5; j++){
+        bestFive[j] = NULL;
+    }
     for(i = 0; i < hashMapCapacity(dictionary); i++){
         HashLink* current = dictionary->table[i];
         while(current != NULL){
             current->value = levenshteinDistance(current->key,
-                                                 strlen(current->key),
-                                                 word,
-                                                 strlen(word));
+                                                 word);
+            int numNull;
+            numNull = 0;
+            while(bestFive[numNull] == NULL && numNull < 5){
+                numNull++; 
+            }
+            if(numNull > 0){
+                bestFive[numNull - 1] = current->key;
+            }
+            else{
+                int addBefore = 0; 
+                while(addBefore < 5 && 
+                      *hashMapGet(dictionary, bestFive[addBefore]) < current->value){
+                    addBefore++;
+                }
+                if(addBefore < 5){
+                    int j;
+                    for(j = 4; j > addBefore; j--){
+                        bestFive[j] = bestFive[j - 1];
+                    }
+                    bestFive[addBefore] = current->key;
+                }
+            }
             current = current->next;
         }
     }
@@ -127,6 +181,11 @@ int main(int argc, const char** argv)
     fclose(file);
     
     char inputBuffer[256];
+    char* bestFive[5];
+    int i;
+    for(i = 0; i < 5; i++){
+        bestFive[i] = NULL;
+    }
     int quit = 0;
     while (!quit)
     {
@@ -138,18 +197,28 @@ int main(int argc, const char** argv)
             inputBuffer[i] = tolower(inputBuffer[i]);
             i++;
         }
-        levenshtein(map, inputBuffer)
-        printf("%s\n", inputBuffer);
         
-        //printf("%s, %s, ld: %d", "test", inputBuffer, levenshteinDistance("test", strlen("test"), inputBuffer, strlen(inputBuffer)));
+        if(strcmp(inputBuffer, "quit") == 0){
+            printf("Quitting...\n"); 
+        }
+        else if(hashMapContainsKey(map, inputBuffer)){
+            printf("The inputted word %s is spelled correctly.\n", inputBuffer);
+        }
+        else{
+            printf("The inputted word %s is spelled incorrectly\n"
+                    "Maybe you meant:\n", inputBuffer);
+            levenshtein(map, bestFive, inputBuffer);
+            int printIndex;
+            for(printIndex = 0; printIndex < 5; printIndex++){
+                printf("%s, %d\n", bestFive[printIndex], *hashMapGet(map, bestFive[printIndex]));
+            }
+        }
         
-        //Fix me:  implement the spell checker code here..
         
         if (strcmp(inputBuffer, "quit") == 0)
         {
             quit = 1;
         }
-        //hashMapPrint(map);
     }
     
     hashMapDelete(map);
